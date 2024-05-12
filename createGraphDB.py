@@ -7,6 +7,16 @@ neo = Neo4j(password="moocmooc")
 createRelationshipsFromPython = False
 
 def createNodes(IDs, label):
+    """
+    Create nodes in the graph database with the given IDs and label.
+
+    Args:
+        IDs (list): A list of IDs for the nodes.
+        label (str): The label to assign to the nodes.
+
+    Returns:
+        None
+    """
     IDs = list(IDs)
 
     query = "CREATE\n"
@@ -18,12 +28,36 @@ def createNodes(IDs, label):
     print(f"{label} nodes created!")
 
 def create_node_index(label, property):
+    """
+    Creates an index for a specific property on nodes with a given label.
+
+    Args:
+        label (str): The label of the nodes to create the index for.
+        property (str): The property to create the index on.
+
+    Returns:
+        None
+
+    Raises:
+        None
+    """
     query = f"create index for (x:{label}) on (x.{property})"
     result = neo.queryDB(query)
 
     print(f"Index created on {label} nodes!")
 
 def createRelationship(tx, data, action_attr):
+    """
+    Creates a relationship between a User and a Target node in the graph database.
+
+    Args:
+        tx: The transaction object used to execute the Cypher query.
+        data: A list of actions containing the action ID, user ID, target ID, timestamp, and other attributes.
+        action_attr: A dictionary mapping action IDs to action labels and features.
+
+    Returns:
+        None
+    """
     for action in data:
         id = action[0]
         user = action[1]
