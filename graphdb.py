@@ -1,5 +1,4 @@
 from neo4j import GraphDatabase
-import time
 
 class Neo4j:
 
@@ -13,11 +12,8 @@ class Neo4j:
     def queryDB(self, query):
         with self._driver.session() as session:
             # result = session.read_transaction(lambda tx: tx.run(query).data())
-            # start_time = time.time()
             # records = session.execute_read(lambda tx: tx.run(query).data())
             result = session.run(query)
-            # end_time = time.time()
-            # print(f"Query executed in {end_time-start_time} seconds")
 
             records = result.data()
             runtime = result.consume().result_consumed_after

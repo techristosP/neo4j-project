@@ -2,6 +2,15 @@ from graphdb import Neo4j
 
 neo = Neo4j(password="moocmooc")
 
+def show_graph_snapshot():
+    query = """
+            match (u:User)-[:Action]->(t) where u.id=1 or u.id=5000 return u, t;
+            """
+    result = neo.queryDB(query)
+    print("Graph snapshot: ")
+    for rec in result:
+        print(f"- userID: {rec['u']['id']} -[:Action]-> targetID: {rec['t']['id']}")
+
 def count_users():
     query = """
             match (u:User) return count(u) as numOfUsers;
@@ -24,13 +33,12 @@ def count_actions():
     print(f"Number of actions: {result['numOfActions']}")
 
 def show_actions_targets_byUser(id):
-    query = f"match (u:User)-[a:Action]->(t:Target) where u.id={id} return u, a, t"
+    query = f"match (u:User)-[a:Action]->(t:Target) where u.id={id} return u, a.id, t"
     result = neo.queryDB(query)
-    # result.sort(key=lambda x: x['t']['id'])
-    print(type(result))
-    print(result)
-    # for r in result:
-    #     print(f"User: {r['u']['id']}, Action: {r['a']}, Target: {r['t']['id']}")
+    result.sort(key=lambda x: x['t']['id'])
+    print(f"Actions and Targets for userID {id}: ")
+    for rec in result:
+        print(f"- actionID: {rec['a.id']} -> targetID: {rec['t']['id']}")
 
 def count_user_actions():
     query = """
@@ -68,8 +76,7 @@ def show_positive_f2_users_targets():
     result = neo.queryDB(query)
     print("Users and Targets with positive f2: ")
     for rec in result:
-        print(f"- userID: {rec['u']['id']}, targetID: {rec['t']['id']}")
-
+        print(f"- userID: {rec['u']['id']} -[:Action]-> targetID: {rec['t']['id']}")
 
 def count_label_1_actions():
     query = """
@@ -83,13 +90,12 @@ def count_label_1_actions():
 
 if __name__ == "__main__":
 
+    show_graph_snapshot()
     count_users()
     count_targets()
     count_actions()
 
-    # TODO
-    # show_actions_targets_byUser(5000)
-
+    show_actions_targets_byUser(5000)
     count_user_actions()
     count_target_users()
     average_actions_per_user()
